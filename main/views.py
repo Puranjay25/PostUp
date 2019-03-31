@@ -10,30 +10,26 @@ def index(request):
 
 def login_user(request):
 	if request.method=="POST":
-		username=request.POST.get("username")
-		password=request.POST.get("password")
+		username=request.POST["username"]
+		password=request.POST["password"]
 		t=user.objects.filter(username=username)
 		if t:
 			for t1 in t:
 				if password==t1.password:
 					u=authenticate(request,username=username,password=password)
 					if u is not None:
-						if u.is_active:
-							request.session['username']=username
-							login(request,u)
-							return redirect('main:index')
-							print("login")
-						else:
-							print("f")
+						request.session['username']=username
+						login(request,u)
+						return render(request,"index.html")
+						print("login")
 					else:
-						print("t")
+						print("f")
 				else:
-					return redirect('main:login_user')
-			error="Type correct Password"
-			return redirect('main:login_user',error=error)
+					error="Type correct Password"
+					return render(request,"login.html",context={"error":error})
 		else:
 			error="No user found"
-			return redirect('main:login_user',error=error)
+			return render(request,"login.html",context={"error":error})
 	return render(request,"login.html")
 
 def signup(request):
@@ -56,18 +52,28 @@ def signup(request):
 
 def dashboard(request):
 	if request.method=="POST":
-		created_by=request.session['username']
-		created_on=datetime.date.today()
-		created_at=datetime.time()
-		likes=0
-		dislikes=0
-		content=request.POST.get("content")
-		t=post.objects.get_or_create(content=content,created_by=created_by,created_on=created_on,created_at=created_at,likes=likes,dislikes=dislikes)
-		t[0].save()
-		return redirect("main:dashboard")
+
+		if 'post' in request.POST:
+			created_by=request.session['username']
+			created_on=datetime.date.today()
+			created_at=datetime.time()
+			likes=0
+			dislikes=0
+			content=request.POST.get("content")
+			t=post.objects.get_or_create(content=content,created_by=created_by,created_on=created_on,created_at=created_at,likes=likes,dislikes=dislikes)
+			t[0].save()
+			return redirect("main:dashboard")
+
+		elif 'like' in request.POST:
+			buttonvalue=request.POST.get("like")
+
+		elif 'dislike' in request.POST:
+			buttonvalue=request.POST.get("dislike")
+
 	data=post.objects.all()
 	for d in data:
-		print(d.content)
+		print(d.post_id)
+
 	return render(request,"dashboard.html",context={"data":data})
 
 

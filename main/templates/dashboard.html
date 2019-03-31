@@ -28,13 +28,12 @@
 				      	</div>
 
 				      	<div class="modal-footer">
-				        	<input type="submit" class="btn btn-danger">Post</input>
+				        	<input type="submit" name="post" class="btn btn-danger">Post</input>
 				      	</div>
 
 		    		</div>
 		  		</div>
 			</div>
-	</form>
 	
 		{% for d in data %}
 			<div class="card card-body mb-3">
@@ -46,13 +45,14 @@
 					<div class="col-md-10">
 						<p class="lead">{{d.content}}</p>
 						<div>
-							<button type="button" class="btn btn-light mr-1"><span class="glyphicon glyphicon-thumbs-up" style="font-size:20px;">{{d.likes}}</span></button>
-							<button type="button" class="btn btn-light mr-1"><span class="glyphicon glyphicon-thumbs-down" style="font-size:20px;">{{d.dislikes}}</span></button>
+							<button type="submit" name="like" value="{{d.post_id}}"" class="btn btn-light mr-1"><span class="glyphicon glyphicon-thumbs-up" style="font-size:20px;">{{d.likes}}</span></button>
+							<button type="submit" name="dislike" value="{{d.post_id}}" class="btn btn-light mr-1"><span class="glyphicon glyphicon-thumbs-down" style="font-size:20px;">{{d.dislikes}}</span></button>
 							<a class="btn btn-info mr-1" href="/post/5c6c47e1bc56480017fa6ff7">Comments</a>
 						</div>
 					</div>
 				</div>
 			</div>
 		{% endfor %}
+	</form>
 	
 {% endblock %}
