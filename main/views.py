@@ -16,19 +16,24 @@ def login_user(request):
 		if t:
 			for t1 in t:
 				if password==t1.password:
-					#u=authenticate(request,username=username,password=password)
-					#if request.user.is_authenticated:
-						#login(request,u)
-					request.session['username']=username
-					#return redirect('main:dashboard',username=username)
-					return redirect('main:index')
+					u=authenticate(request,username=username,password=password)
+					if u is not None:
+						if u.is_active:
+							request.session['username']=username
+							login(request,u)
+							return redirect('main:index')
+							print("login")
+						else:
+							print("f")
+					else:
+						print("t")
 				else:
 					return redirect('main:login_user')
 			error="Type correct Password"
-			return render(request,"login.html",context={"error":error})
+			return redirect('main:login_user',error=error)
 		else:
 			error="No user found"
-			return render(request,"login.html",context={"error":error})
+			return redirect('main:login_user',error=error)
 	return render(request,"login.html")
 
 def signup(request):
