@@ -57,9 +57,19 @@ def dashboard(request):
 
 		elif 'like' in request.POST:
 			buttonvalue=request.POST.get("like")
+			t=Post.objects.get(post_id=buttonvalue)
+			current_likes=t.likes
+			updated_likes=current_likes+1
+			t.likes=updated_likes
+			t.save()
 
 		elif 'dislike' in request.POST:
 			buttonvalue=request.POST.get("dislike")
+			t=Post.objects.get(post_id=buttonvalue)
+			current_dislikes=t.dislikes
+			updated_dislikes=current_dislikes+1
+			t.dislikes=updated_dislikes
+			t.save()
 
 	data=Post.objects.all()
 	return render(request,"dashboard.html",context={"data":data})
