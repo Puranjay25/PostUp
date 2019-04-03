@@ -1,8 +1,11 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
+from .models import Post
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from .models import user,post
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib import messages
 import datetime
 # Create your views here.
 def index(request):
@@ -10,45 +13,33 @@ def index(request):
 
 def login_user(request):
 	if request.method=="POST":
-		username=request.POST["username"]
-		password=request.POST["password"]
-		t=user.objects.filter(username=username)
-		if t:
-			for t1 in t:
-				if password==t1.password:
-					u=authenticate(request,username=username,password=password)
-					if u is not None:
-						request.session['username']=username
-						login(request,u)
-						return render(request,"index.html")
-						print("login")
-					else:
-						print("f")
-				else:
-					error="Type correct Password"
-					return render(request,"login.html",context={"error":error})
+		form=AuthenticationForm(request,request.POST)
+		if form.is_valid():
+			username=form.cleaned_data.get('username')
+			password=form.cleaned_data.get('password')
+			user=authenticate(username=username,password=password)
+			if user is not None:
+				login(request,user)
+				request.session['username']=username
+				return redirect('main:dashboard')
 		else:
-			error="No user found"
-			return render(request,"login.html",context={"error":error})
-	return render(request,"login.html")
+			for msg in form.error_messages:
+				print(form.error_messages[msg])
+
+	form=AuthenticationForm()
+	return render(request,"login.html",{"form":form})
 
 def signup(request):
 	if request.method=="POST":
-		firstname=request.POST.get("firstname")
-		lastname=request.POST.get("lastname")
-		username=request.POST.get("username")
-		password=request.POST.get("password")
-		confirmpassword=request.POST.get("confirmpassword")
-
-
-		if password==confirmpassword:
-			t=user.objects.get_or_create(firstname=firstname,lastname=lastname,username=username,password=password)
-			t[0].save()
+		form=UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return redirect('main:login_user')
 		else:
-			return redirect('signup',error='Password And Confirm Password do not match')
-			error="Password And Confirm Password do not match"
-			return render(request,"signup.html",context={"error":error})
-	return render(request,"signup.html")
+			for msg in form.error_messages:
+				print(form.error_messages[msg])
+	form=UserCreationForm()
+	return render(request,"signup.html",{"form":form})
 
 def dashboard(request):
 	if request.method=="POST":
@@ -60,7 +51,7 @@ def dashboard(request):
 			likes=0
 			dislikes=0
 			content=request.POST.get("content")
-			t=post.objects.get_or_create(content=content,created_by=created_by,created_on=created_on,created_at=created_at,likes=likes,dislikes=dislikes)
+			t=Post.objects.get_or_create(content=content,created_by=created_by,created_on=created_on,created_at=created_at,likes=likes,dislikes=dislikes)
 			t[0].save()
 			return redirect("main:dashboard")
 
@@ -70,10 +61,7 @@ def dashboard(request):
 		elif 'dislike' in request.POST:
 			buttonvalue=request.POST.get("dislike")
 
-	data=post.objects.all()
-	for d in data:
-		print(d.post_id)
-
+	data=Post.objects.all()
 	return render(request,"dashboard.html",context={"data":data})
 
 
