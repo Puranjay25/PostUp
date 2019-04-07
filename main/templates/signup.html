@@ -1,13 +1,19 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-	Signup
+    Signup
 {% endblock %}
 
+
+
 {% block body %}
-	<form method="post" >
-    {% csrf_token %}
-		{{form.as_p}}
-    <button type="submit" class="btn btn-success">signup</button>
-	</form>
+    <div class="container">
+    	<form method="post" >
+            <h1 id="s">Signup</h1>
+        {% csrf_token %}
+    		{{form.as_p}}
+        <button type="submit" class="btn btn-success">signup</button><br>
+        Already registered?? <a href="/login/">Login</a> here.
+    	</form>
+    </div>
 {% endblock %}

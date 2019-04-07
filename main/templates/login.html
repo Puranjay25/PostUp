@@ -5,10 +5,12 @@
 {% endblock %}
 
 {% block body %}
-	<form method="post">
-		{% csrf_token %}
-      {{form.as_p}}
-      
-      <button type="submit" class="btn btn-success">Login</button>
-	</form>
+  <div class="container">
+  	<form method="post">
+  		{% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="btn btn-success">Login</button><br>
+        Don't have an account?? <a href="/signup/">Register</a> here.
+  	</form>
+  </div>
 {% endblock %}

@@ -72,7 +72,8 @@ def dashboard(request):
 			t.save()
 
 	data=Post.objects.all()
-	return render(request,"dashboard.html",context={"data":data})
+	print(request.session['username'])
+	return render(request,"dashboard.html",context={"data":data,"username":request.session['username']})
 
 
 def logout_user(request):
