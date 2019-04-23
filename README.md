@@ -1,0 +1,3 @@
+# PostUp
+
+> pip install matplotlib
